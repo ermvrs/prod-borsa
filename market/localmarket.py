@@ -8,9 +8,12 @@ from algorithms.blackalgo import BlackAlgoLiveFunc,BlackAlgoLiveFuncNoDiff
 from fonksiyonlar.outputs import TelegramOutput
 from fonksiyonlar.outputs import OutputManager
 from health.healthcontroller import InformationDatabase
-from classes.error import Error
+from classes.error import Error, Information
+from classes.signal import Signal
+from classes.techdata import TechnicalAnalysisData
 class Market:
     def __init__(self,symbol,exchange):
+        self.AlgorithmFunc = TestAlgoLiveFunc
         self.Telegram = TelegramOutput()
         self.Symbol = symbol
         self.Exchange = exchange
@@ -23,7 +26,9 @@ class Market:
         if not start:
             print("Error at starting socket. Symbol : {0}, Error : {1}".format(self.Symbol,err))
             errorclass = Error(self.Symbol,getcurrentdate(),"localmarket.py LN25",str(err),1)
-            InformationDatabase.appendError(errorclass)
+            info = Information(self.Symbol,getcurrentdate(),"Error At starting socket")
+            InformationDatabase.getInstance().appendInfoToPair(self.Symbol, info)
+            InformationDatabase.getInstance().appendError(errorclass)
         else:
             print("Started to listen {} trades.".format(self.Symbol))
     def startSockets(self):
@@ -55,8 +60,10 @@ class Market:
             self.Candles = Candles
             self.CandleCount = len(Candles)
             self.lastCandleTimestamp = int(Candles.iloc[-1:]['Timestamp'])
-            print(self.Candles.iloc[-1:])
+            #print(self.Candles.iloc[-1:])
             print("{} Candles Loaded.".format(self.CandleCount))
+            info = Information(self.Symbol, getcurrentdate(), "{} Candles Loaded.".format(self.CandleCount))
+            InformationDatabase.getInstance().appendInfoToPair(self.Symbol, info)
         else:
             raise Exception("Candles parameter at loadCandles should be an instance of pandas.Dataframe")
     def updateLastCandle(self,newCandle):
@@ -64,6 +71,8 @@ class Market:
         self.Candles = self.Candles.append(newCandle,ignore_index=True) # row eklemiyor.
         self.Candles.reset_index(drop=True, inplace=True)
         print("Candles Updated")
+        info = Information(self.Symbol, getcurrentdate(), "Candles Updated.")
+        InformationDatabase.getInstance().appendInfoToPair(self.Symbol, info)
     def InitializeCandleSockets(self,interval):
         start,err = self.Exchange.startCandleListening(_sym=self.Symbol,_interval=interval,_cb=self.candleSocketHandler)
         if not start:
@@ -72,6 +81,8 @@ class Market:
             InformationDatabase.appendError(errorclass)
         else:
             print("Started to listen {}".format(self.Symbol))
+            info = Information(self.Symbol, getcurrentdate(), "Started to listen {}".format(self.Symbol))
+            InformationDatabase.getInstance().appendInfoToPair(self.Symbol, info)
     def candleSocketHandler(self,msg):
         newCandle = {}
         newCandle['Date'] = str(timestamptodate(msg['k']['T']))
@@ -101,7 +112,7 @@ class Market:
         sma = list(SMA(rsival, 12))[-1:][0]
         rsi = list(rsival)[-1:][0]
         #print("({0})Best Buy Price Results => RSI : {1}, EMA : {2}, SMA : {3}".format(self.Symbol,rsi,ema,sma,Decimal(price)))
-        self.checkForAlgorithm(BlackAlgoLiveFunc, rsi,ema,sma, Decimal(price))
+        self.checkForAlgorithm(self.AlgorithmFunc, rsi,ema,sma, Decimal(price))
 
     def recalculatewithlasttradeprice(self,price,isUpdated):
         if isUpdated:
@@ -110,7 +121,7 @@ class Market:
             sma = list(SMA(rsival, 12))[-1:][0]
             rsi = list(rsival)[-1:][0]
             #print("({0})Last Trade Price Results(UPDATED) => RSI : {1}, EMA : {2}, SMA : {3}".format(self.Symbol,rsi, ema,sma,Decimal(price)))
-            self.checkForAlgorithm(BlackAlgoLiveFunc,rsi,ema,sma,Decimal(price))
+            self.checkForAlgorithm(self.AlgorithmFunc,rsi,ema,sma,Decimal(price))
         else:
             fakecandle = {}
             fakecandle['Date'] = datetime.now()
@@ -125,12 +136,16 @@ class Market:
             sma = list(SMA(rsival, 12))[-1:][0]
             rsi = list(rsival)[-1:][0]
             #print("({0} - , {4})Last Trade Price Results(NOUPDT) => RSI : {1}, EMA : {2}, SMA : {3}".format(self.Symbol,rsi,ema,sma,Decimal(price)))
-            self.checkForAlgorithm(BlackAlgoLiveFunc,rsi,ema,sma,Decimal(price))
+            self.checkForAlgorithm(self.AlgorithmFunc,rsi,ema,sma,Decimal(price))
 
     def checkForAlgorithm(self,AlgorithmLiveFunc,rsi,ema,sma,currPrice):
         algo,target = AlgorithmLiveFunc(rsi,ema,sma,currPrice)
         if algo:
             #output target
+            td = TechnicalAnalysisData(rsi, ema, sma, getcurrentdate())
+            signal = Signal(self.Symbol,str(currPrice),str(target),getcurrentdate(),td.__dict__)
+
+            InformationDatabase.getInstance().appendSignal(signal)
             print("==========Live signal given ==========")
             print("Pair : {2}\nBuy Price : {0}\nTarget Price : {1}".format(currPrice,target,self.Symbol))
             #self.Telegram.sendMessage("Pair : {0}\nBuy Price : {1}\nTarget Price : {2}".format(self.Symbol,currPrice,target))

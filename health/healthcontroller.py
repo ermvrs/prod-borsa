@@ -20,11 +20,26 @@ class InformationDatabase:
             self.Database['HealthStatus'] = "Normal"
             self.Database['Errors'] = []
             self.Database['SignalsCount'] = 0
+            self.Database['Signals'] = []
+            self.Database['PairStatus'] = {}
             InformationDatabase.__instance = self
+
+
+
     def appendError(self,Error):
         self.Database['Errors'].append(Error)
+    def appendInfoToPair(self,Pair,Info):
+        if self.isKeySet(Pair):
+            self.Database[Pair].append(Info)
+        else:
+            self.Database[Pair] = []
+            self.Database[Pair].append(Info)
+    def appendSignal(self,Signal):
+        self.Database['Signals'].append(Signal)
     def increaseSignalCount(self):
         self.Database['SignalsCount'] += 1
+    def addPairStatus(self,Pair,Status):
+        self.Database['PairStatus'][Pair] = Status
     def getDatabase(self):
         return self.Database
     def setObject(self,Key,Object):

@@ -19,9 +19,9 @@ class Binance:
             return self.Client.get_order_book(symbol=_symbol)
         else:
             raise Exception("getOrderBook parameter should be an instance of string.")
-    def getKlines(self,_symbol,klinetime):
+    def getKlines(self,_symbol,klinetime,limit):
         if isinstance(_symbol,str) and isinstance(klinetime,str):
-            return self.Client.get_klines(symbol=_symbol,interval=klinetime)
+            return self.Client.get_klines(symbol=_symbol,interval=klinetime,limit=limit)
         else:
             raise Exception("Symbol parameter should be a string and klinetime should be an instance of Client.kline")
     def getFirstDepth(self,_sym,lmt):

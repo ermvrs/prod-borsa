@@ -5,3 +5,8 @@ class Error:
         self.File = File
         self.ErrorDesc = ErrorDesc
         self.Level = Level
+class Information:
+    def __init__(self,Pair,Date,Desc):
+        self.Pair = Pair
+        self.Date = Date
+        self.Desc = Desc
