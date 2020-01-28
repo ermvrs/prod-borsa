@@ -1,0 +1,58 @@
+from decimal import Decimal
+import pandas as pd
+from fonksiyonlar.timefuncs import timestamptodate
+from fonksiyonlar.techfuncs import RSI,SMA,EMA
+from market.localmarket import Market
+def startFunctionsForMarket(StartParams):
+    print("Starting Local Market - ({})".format(StartParams.Symbol))
+    candlelistx = StartParams.Exchange.getKlines(StartParams.Symbol,StartParams.Exchange.Client.KLINE_INTERVAL_3MINUTE)
+    candlelist = StartParams.Exchange.getHistoricalCandles(StartParams.Symbol,StartParams.Exchange.Client.KLINE_INTERVAL_3MINUTE,"3 days ago UTC")
+    array_of_dicts = []
+    for candle in candlelist:
+        tempdict = {}
+        if float(candle[5]) > 0:
+            tempdict['Date'] = timestamptodate(candle[6])
+            tempdict['Timestamp'] = int(candle[6])
+            tempdict['Closeprice'] = Decimal(candle[4])
+            tempdict['Openprice'] = Decimal(candle[1])
+            tempdict['High'] = Decimal(candle[2])
+            tempdict['Low'] = Decimal(candle[3])
+            tempdict['Volume'] = float(candle[5])
+            tempdict['Tradescount'] = int(candle[8])
+            tempdict['RSI'] = 0
+            tempdict['EMA'] = 0
+            tempdict['SMA'] = 0
+            array_of_dicts.append(tempdict)
+        else:
+            continue
+    df = pd.DataFrame(array_of_dicts)
+    print("({0})Length of Dict : {1}".format(StartParams.Symbol,len(df)))
+    rsivalues = RSI(df, 4)  # ilk dört veri kayıyor ileride buna dikkat et
+    df.drop(df.index[:4], inplace=True)
+    df.reset_index(drop=True, inplace=True)
+    sma = SMA(rsivalues, 12)
+    ema = EMA(rsivalues, 4)
+    # reindexing
+    rsivalues.reset_index(drop=True, inplace=True)
+    ema.reset_index(drop=True, inplace=True)
+    sma.reset_index(drop=True, inplace=True)
+
+    for index, row in df.iterrows():
+        df.loc[index, "RSI"] = rsivalues[index]
+        df.loc[index, "EMA"] = ema[index]
+        df.loc[index, "SMA"] = sma[index]
+    df.dropna(inplace=True)
+    df.reset_index(drop=True, inplace=True)  # Dropped nan values
+    ##marketi başlat
+    markt = Market(StartParams.Symbol,StartParams.Exchange)
+    markt.loadCandles(df[-250:])
+    markt.InitializeCandleSockets(StartParams.Exchange.Client.KLINE_INTERVAL_3MINUTE)
+    markt.InitializeTradeSockets()
+    markt.startSockets() #startsockets çağrılmadımı program kapanıyor.
+    print("Market Started Succesfully - ({})".format(StartParams.Symbol))
+    #print("({3})Values : RSI:{0} EMA:{1} SMA:{2}".format(list(rsivalues)[-1:],list(ema)[-1:],list(sma)[-1:],StartParams.Symbol))
+
+class StartParams:
+    def __init__(self,sym,exc):
+        self.Symbol = sym
+        self.Exchange = exc
