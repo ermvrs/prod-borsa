@@ -17,6 +17,7 @@ class Market:
         self.AlgorithmFunc = TestAlgoLiveFunc
         self.Telegram = TelegramOutput()
         self.Symbol = symbol
+        self.VolumeRequirement = 50 #Sinyal çıktısı için 24 saatlik volume şartı (btc bazlı)
         self.Exchange = exchange
         response = self.Exchange.getFirstDepth(symbol,50)
         self.Bids = response["bids"]
@@ -144,9 +145,9 @@ class Market:
         if algo:
             #output target
             volume = float(self.Exchange.get24HVolume(self.Symbol)[0])
-            if volume > 50:
+            if volume > self.VolumeRequirement:
                 td = TechnicalAnalysisData(rsi, ema, sma, getcurrentdate(),volume)
-                signal = Signal(self.Symbol,str(currPrice),str(target),getcurrentdate(),td.__dict__,getcurrentts())
+                signal = Signal(self.Symbol,str(currPrice),str(target),getcurrentdate(),td.__dict__,getcurrentts(),AlgorithmLiveFunc.__name__)
 
                 InformationDatabase.getInstance().appendSignal(signal)
                 print("==========Live signal given ==========")

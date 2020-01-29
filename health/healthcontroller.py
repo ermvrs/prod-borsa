@@ -23,6 +23,7 @@ class InformationDatabase:
             self.Database['SignalsCount'] = 0
             self.Database['Signals'] = []
             self.Database['PairStatus'] = {}
+            self.Database['PairLastSignalTime'] = {}
             InformationDatabase.__instance = self
 
     def appendError(self,Error):
@@ -34,7 +35,17 @@ class InformationDatabase:
             self.Database[Pair] = []
             self.Database[Pair].append(Info)
     def appendSignal(self,Signal):
-        self.Database['Signals'].append(Signal)
+        try:
+            if self.Database['PairLastSignalTime'][Signal.Pair] + self.TSBetweenSamePairSignals < Signal.Timestamp:
+                self.Database['Signals'].append(Signal)
+                self.addPairLastSignalTime(Signal.Pair, Signal.Timestamp)
+            else:
+                print("That signal is already given in 10 minutes. Last TS : {0} - Current TS : {1} - Pair {2}".format(self.Database['PairLastSignalTime'][Signal.Pair],Signal.Timestamp,Signal.Pair))
+        except KeyError:
+            self.Database['Signals'].append(Signal)
+            self.addPairLastSignalTime(Signal.Pair, Signal.Timestamp)
+    def addPairLastSignalTime(self,Pair,Timestamp):
+        self.Database['PairLastSignalTime'][Pair] = Timestamp
     def increaseSignalCount(self):
         self.Database['SignalsCount'] += 1
     def addPairStatus(self,Pair,Status):

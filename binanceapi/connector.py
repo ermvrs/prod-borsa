@@ -51,6 +51,7 @@ class Binance:
             return False,err
     def get24HVolume(self,_symbol):
         try:
+            # quote volume -> btc olarak volume
             return self.Client.get_ticker(symbol=_symbol)['quoteVolume'], None
         except Exception as err:
             return False,err
