@@ -17,14 +17,13 @@ class InformationDatabase:
             print("Singletonu iki kere çağırma")
         else:
             self.Database = {}
+            self.TSBetweenSamePairSignals = 600000 # aynı pairdaki iki sinyal arası bekleme süresi
             self.Database['HealthStatus'] = "Normal"
             self.Database['Errors'] = []
             self.Database['SignalsCount'] = 0
             self.Database['Signals'] = []
             self.Database['PairStatus'] = {}
             InformationDatabase.__instance = self
-
-
 
     def appendError(self,Error):
         self.Database['Errors'].append(Error)
