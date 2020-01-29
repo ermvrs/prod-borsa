@@ -14,7 +14,7 @@ InformationDatabase() # initiliaze db
 OutputManager() #silinebilir
 
 btcmarkets = []
-with open("marketlist.txt" , "r") as file:
+with open("marketlist-r.txt" , "r") as file:
     data = file.read()
     btcmarkets = json.loads(data)
 

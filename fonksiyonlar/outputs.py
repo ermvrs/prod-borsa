@@ -1,6 +1,7 @@
 import json
 import requests
 from datetime import datetime
+from fonksiyonlar.formats import eightdecimalstring
 from decimal import Decimal
 class TelegramOutput:
     def __init__(self):
@@ -46,7 +47,8 @@ class OutputManager:
         }
         BotApi = ("1045834942:AAHAS-5JoTN9SwpVA_sXQwl4Cb3JwEdGWfw")
         bot_chatID = '-382269432'
-        sp1, sp2, sp3 = str("{0:.8f}".format(_sellprices[0])),str("{0:.8f}".format(_sellprices[1])),str("{0:.8f}".format(_sellprices[2]))
+        #sp1, sp2, sp3 = str("{0:.8f}".format(_sellprices[0])),str("{0:.8f}".format(_sellprices[1])),str("{0:.8f}".format(_sellprices[2]))
+        sp1, sp2, sp3 = eightdecimalstring(_sellprices[0]), eightdecimalstring(_sellprices[1]), eightdecimalstring(_sellprices[2])
         Msg = "Pair : {0}\nBuy Price : {1}\nSell Price Levels \n{2}\n{3}\n{4}".format(_pair,Decimal(_buyprice),Decimal(sp1),Decimal(sp2),Decimal(sp3))
         send_text = 'https://api.telegram.org/bot' + BotApi + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + Msg
         response = requests.get(send_text).json()
@@ -54,7 +56,8 @@ class OutputManager:
         return True
 
     def PublishSignal(self,pair,buy,sells):
-        sp1, sp2, sp3 = str("{0:.8f}".format(sells[0])), str("{0:.8f}".format(sells[1])), str("{0:.8f}".format(sells[2]))
+        #sp1, sp2, sp3 = str("{0:.8f}".format(sells[0])), str("{0:.8f}".format(sells[1])), str("{0:.8f}".format(sells[2]))
+        sp1,sp2,sp3 = eightdecimalstring(sells[0]), eightdecimalstring(sells[1]), eightdecimalstring(sells[2])
         endpoint = "http://185.50.69.97:8080/signal/add"
         data = {
             'key' : "erimsapp34",

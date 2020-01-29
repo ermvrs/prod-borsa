@@ -3,6 +3,7 @@
 #Version : 1.0.0
 from algorithms.algorithm import Algorithm
 from algorithms.backtest import BacktestObject,SignalPoint
+from fonksiyonlar.formats import eightdecimalstring
 from decimal import Decimal
 import pandas as pd
 class BlackAlgo(Algorithm):
@@ -48,13 +49,13 @@ class BlackAlgo(Algorithm):
 def BlackAlgoLiveFunc(rsi,ema,sma, price):
     diff = sma - ema
     if rsi < 15 and ema < 20 and sma > 25 and ema > diff and diff > 15:
-        return True, [Decimal(price * Decimal(1.015)),Decimal(price * Decimal(1.024)), Decimal(price * Decimal(1.04))]
+        return True, [eightdecimalstring(price * (1.015)),eightdecimalstring(price * (1.024)), eightdecimalstring(price * (1.04))]
     else:
         return False, 0
 
 def BlackAlgoLiveFuncNoDiff(rsi,ema,sma,price): # riskli ama daha fazla signal
     diff = sma - ema
     if ema < 20 and diff > 15 and sma > 25 and rsi < 15:
-        return True, [Decimal(price * Decimal(1.015)),Decimal(price * Decimal(1.024)), Decimal(price * Decimal(1.04))]
+        return True, [eightdecimalstring(price * (1.015)),eightdecimalstring(price * (1.024)), eightdecimalstring(price * (1.04))]
     else:
         return False, 0

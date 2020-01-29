@@ -1,6 +1,7 @@
 import pandas as pd
-from fonksiyonlar.timefuncs import timestamptodate,getcurrentdate
+from fonksiyonlar.timefuncs import timestamptodate,getcurrentdate, getcurrentts
 from datetime import datetime
+from fonksiyonlar.formats import eightdecimalstring
 from fonksiyonlar.techfuncs import RSI,SMA,EMA
 from decimal import Decimal
 from algorithms.testalgo import TestAlgoLiveFunc
@@ -139,15 +140,19 @@ class Market:
             self.checkForAlgorithm(self.AlgorithmFunc,rsi,ema,sma,Decimal(price))
 
     def checkForAlgorithm(self,AlgorithmLiveFunc,rsi,ema,sma,currPrice):
-        algo,target = AlgorithmLiveFunc(rsi,ema,sma,currPrice)
+        algo,target = AlgorithmLiveFunc(rsi,ema,sma,float(currPrice))
         if algo:
             #output target
-            td = TechnicalAnalysisData(rsi, ema, sma, getcurrentdate())
-            signal = Signal(self.Symbol,str(currPrice),str(target),getcurrentdate(),td.__dict__)
+            volume = float(self.Exchange.get24HVolume(self.Symbol)[0])
+            if volume > 50:
+                td = TechnicalAnalysisData(rsi, ema, sma, getcurrentdate(),volume)
+                signal = Signal(self.Symbol,str(currPrice),str(target),getcurrentdate(),td.__dict__,getcurrentts())
 
-            InformationDatabase.getInstance().appendSignal(signal)
-            print("==========Live signal given ==========")
-            print("Pair : {2}\nBuy Price : {0}\nTarget Price : {1}".format(currPrice,target,self.Symbol))
-            #self.Telegram.sendMessage("Pair : {0}\nBuy Price : {1}\nTarget Price : {2}".format(self.Symbol,currPrice,target))
-            OutputManager.getInstance().PublishSignal(self.Symbol,currPrice,target)
+                InformationDatabase.getInstance().appendSignal(signal)
+                print("==========Live signal given ==========")
+                print("Pair : {2}\nBuy Price : {0}\nTarget Price : {1}".format(currPrice,target,self.Symbol))
+                #self.Telegram.sendMessage("Pair : {0}\nBuy Price : {1}\nTarget Price : {2}".format(self.Symbol,currPrice,target))
+                OutputManager.getInstance().PublishSignal(self.Symbol,currPrice,target)
+            else:
+                print("Volume is not enough. Symbol : {} - Volume : {}".format(self.Symbol,volume))
 

@@ -11,6 +11,7 @@ def startFunctionsForMarket(StartParams):
     InformationDatabase.getInstance().appendInfoToPair(StartParams.Symbol, info)
     InformationDatabase.getInstance().addPairStatus(StartParams.Symbol,"Starting")
     candlelist = StartParams.Exchange.getKlines(StartParams.Symbol,StartParams.Exchange.Client.KLINE_INTERVAL_3MINUTE,limit=1200)
+    print("24 VOLUME OF {0} : {1}".format(StartParams.Symbol,StartParams.Exchange.get24HVolume(StartParams.Symbol)[0]))
     #candlelist = StartParams.Exchange.getHistoricalCandles(StartParams.Symbol,StartParams.Exchange.Client.KLINE_INTERVAL_3MINUTE,"3 days ago UTC")
     array_of_dicts = []
     for candle in candlelist:
@@ -52,6 +53,7 @@ def startFunctionsForMarket(StartParams):
         df.dropna(inplace=True)
         df.reset_index(drop=True, inplace=True)  # Dropped nan values
         ##marketi başlat
+
         markt = Market(StartParams.Symbol,StartParams.Exchange)
         markt.loadCandles(df[-250:])
         markt.InitializeCandleSockets(StartParams.Exchange.Client.KLINE_INTERVAL_3MINUTE)

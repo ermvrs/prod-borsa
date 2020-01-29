@@ -3,6 +3,7 @@
 #Designed for testing live output signals.
 #Version : 1.0.0
 from algorithms.algorithm import Algorithm
+from fonksiyonlar.formats import eightdecimalstring
 from algorithms.backtest import BacktestObject,SignalPoint
 import pandas as pd
 from decimal import Decimal
@@ -19,4 +20,4 @@ class TestAlgo(Algorithm):
         #Test algoritması için backteste gerek yok.
         return False
 def TestAlgoLiveFunc(RSI,ema,sma,price):
-    return float(RSI) < 50, [Decimal(price * Decimal(1.015)),Decimal(price * Decimal(1.024)), Decimal(price * Decimal(1.04))]
+    return float(RSI) < 50, [eightdecimalstring(price * (1.015)),eightdecimalstring(price * (1.024)), eightdecimalstring(price * (1.04))]
