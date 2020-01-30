@@ -1,5 +1,6 @@
 from flask import Flask,request
 from health.healthcontroller import InformationDatabase
+from fonksiyonlar.timefuncs import getcurrentdate,getcurrentts
 import json
 app = Flask("__main__")
 
@@ -26,4 +27,9 @@ def signalsout():
 @app.route('/pairstatus')
 def pairstateout():
     json_string = json.dumps(InformationDatabase.getInstance().getObject('PairStatus'))
+    return json_string
+
+@app.route('/servertime')
+def time():
+    json_string = { 'Date' : getcurrentdate(), 'Timestamp' : getcurrentts()}
     return json_string
