@@ -14,7 +14,7 @@ from classes.signal import Signal
 from classes.techdata import TechnicalAnalysisData
 class Market:
     def __init__(self,symbol,exchange):
-        self.AlgorithmFunc = BlackAlgoLiveFunc
+        self.AlgorithmFunc = TestAlgoLiveFunc
         self.Telegram = TelegramOutput()
         self.Symbol = symbol
         self.VolumeRequirement = 50 #Sinyal çıktısı için 24 saatlik volume şartı (btc bazlı)
@@ -27,10 +27,10 @@ class Market:
         start,err = self.Exchange.startListenMarket(_sym=self.Symbol,_cb=self.HandleResponse)
         if not start:
             print("Error at starting socket. Symbol : {0}, Error : {1}".format(self.Symbol,err))
-            errorclass = Error(self.Symbol,getcurrentdate(),"localmarket.py LN25",str(err),1)
+            #errorclass = Error(self.Symbol,getcurrentdate(),"localmarket.py LN25",str(err),1)
             info = Information(self.Symbol,getcurrentdate(),"Error At starting socket")
             InformationDatabase.getInstance().appendInfoToPair(self.Symbol, info)
-            InformationDatabase.getInstance().appendError(errorclass)
+            #InformationDatabase.getInstance().appendError(errorclass)
         else:
             print("Started to listen {} trades.".format(self.Symbol))
     def startSockets(self):
@@ -39,8 +39,8 @@ class Market:
             #start sockets, initializetradesockets ve initialize candle sockets 3 ü aynanda çağırılırsa hataveriyor olabilir. Hata kaynağı
             #bu bunu fixle.
             print("Error at starting sockets. Symbol : {0}, Error : {1}".format(self.Symbol,err))
-            errorclass = Error(self.Symbol,getcurrentdate(),"localmarket.py LN35",str(err),1)
-            InformationDatabase.getInstance().appendError(errorclass)
+            #errorclass = Error(self.Symbol,getcurrentdate(),"localmarket.py LN35",str(err),1)
+            #InformationDatabase.getInstance().appendError(errorclass)
         else:
             print("{} Sockets started.".format(self.Symbol))
     def HandleResponse(self,msg):
@@ -79,8 +79,8 @@ class Market:
         start,err = self.Exchange.startCandleListening(_sym=self.Symbol,_interval=interval,_cb=self.candleSocketHandler)
         if not start:
             print("Error at starting candle socket.\nSymbol : {0},\nError : {1}".format(self.Symbol,err))
-            errorclass = Error(self.Symbol,getcurrentdate(),"localmarket.py LN71",err.msg,1)
-            InformationDatabase.appendError(errorclass)
+            #errorclass = Error(self.Symbol,getcurrentdate(),"localmarket.py LN71",err.msg,1)
+            #InformationDatabase.appendError(errorclass)
         else:
             print("[{0}] Started to listen {1}".format(getcurrentdate(),self.Symbol))
             info = Information(self.Symbol, getcurrentdate(), "Started to listen {}".format(self.Symbol))
