@@ -13,7 +13,14 @@ class TelegramOutput:
 
         response = requests.get(send_text).json()
         return response
-
+def TelegramMessage(signal): # bunu kullan
+    BotApi = ("1089469288:AAEGNf310x82FrmRMxEZyzxfUcgqDbqIwa0")
+    bot_chatID = str('-382269432')
+    print(signal.Sells[1])
+    Msg = "Pair : {0}%0ABuy Price : {1}%0ASell Price Levels %0A{2}%0A{3}%0A{4}".format(signal.Pair,signal.Buy,signal.Sells[0],signal.Sells[1],signal.Sells[2])
+    send_text = 'https://api.telegram.org/bot' + BotApi + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + Msg
+    resp = requests.get(send_text).json()
+    print("Message sent" + json.dumps(resp))
 class OutputManager:
     __instance = None
     @staticmethod

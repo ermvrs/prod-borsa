@@ -1,3 +1,4 @@
+from fonksiyonlar.outputs import TelegramMessage
 class InformationDatabase:
     __instance = None
     '''
@@ -39,11 +40,13 @@ class InformationDatabase:
             if self.Database['PairLastSignalTime'][Signal.Pair] + self.TSBetweenSamePairSignals < Signal.Timestamp:
                 self.Database['Signals'].append(Signal)
                 self.addPairLastSignalTime(Signal.Pair, Signal.Timestamp)
+                TelegramMessage(Signal)
             else:
                 print("That signal is already given in 10 minutes. Last TS : {0} - Current TS : {1} - Pair {2}".format(self.Database['PairLastSignalTime'][Signal.Pair],Signal.Timestamp,Signal.Pair))
         except KeyError:
             self.Database['Signals'].append(Signal)
             self.addPairLastSignalTime(Signal.Pair, Signal.Timestamp)
+            TelegramMessage(Signal)
     def addPairLastSignalTime(self,Pair,Timestamp):
         self.Database['PairLastSignalTime'][Pair] = Timestamp
     def increaseSignalCount(self):

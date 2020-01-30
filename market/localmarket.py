@@ -14,7 +14,7 @@ from classes.signal import Signal
 from classes.techdata import TechnicalAnalysisData
 class Market:
     def __init__(self,symbol,exchange):
-        self.AlgorithmFunc = TestAlgoLiveFunc
+        self.AlgorithmFunc = BlackAlgoLiveFunc
         self.Telegram = TelegramOutput()
         self.Symbol = symbol
         self.VolumeRequirement = 50 #Sinyal çıktısı için 24 saatlik volume şartı (btc bazlı)
@@ -147,13 +147,13 @@ class Market:
             volume = float(self.Exchange.get24HVolume(self.Symbol)[0])
             if volume > self.VolumeRequirement:
                 td = TechnicalAnalysisData(rsi, ema, sma, getcurrentdate(),volume)
-                signal = Signal(self.Symbol,str(currPrice),str(target),getcurrentdate(),td.__dict__,getcurrentts(),AlgorithmLiveFunc.__name__)
+                signal = Signal(self.Symbol,str(currPrice),target,getcurrentdate(),td.__dict__,getcurrentts(),AlgorithmLiveFunc.__name__)
 
                 InformationDatabase.getInstance().appendSignal(signal)
                 print("==========Live signal given ==========")
                 print("Pair : {2}\nBuy Price : {0}\nTarget Price : {1}".format(currPrice,target,self.Symbol))
                 #self.Telegram.sendMessage("Pair : {0}\nBuy Price : {1}\nTarget Price : {2}".format(self.Symbol,currPrice,target))
-                OutputManager.getInstance().PublishSignal(self.Symbol,currPrice,target)
+                #OutputManager.getInstance().PublishSignal(self.Symbol,currPrice,target)
             else:
                 print("Volume is not enough. Symbol : {} - Volume : {}".format(self.Symbol,volume))
 
