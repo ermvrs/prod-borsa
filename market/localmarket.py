@@ -72,7 +72,7 @@ class Market:
         self.Candles.drop(self.Candles.index[:1],inplace=True)
         self.Candles = self.Candles.append(newCandle,ignore_index=True) # row eklemiyor.
         self.Candles.reset_index(drop=True, inplace=True)
-        print("Candles Updated")
+        print("[{}] Candles Updated".format(getcurrentdate()))
         info = Information(self.Symbol, getcurrentdate(), "Candles Updated.")
         InformationDatabase.getInstance().appendInfoToPair(self.Symbol, info)
     def InitializeCandleSockets(self,interval):
@@ -82,7 +82,7 @@ class Market:
             errorclass = Error(self.Symbol,getcurrentdate(),"localmarket.py LN71",err.msg,1)
             InformationDatabase.appendError(errorclass)
         else:
-            print("Started to listen {}".format(self.Symbol))
+            print("[{0}] Started to listen {1}".format(getcurrentdate(),self.Symbol))
             info = Information(self.Symbol, getcurrentdate(), "Started to listen {}".format(self.Symbol))
             InformationDatabase.getInstance().appendInfoToPair(self.Symbol, info)
     def candleSocketHandler(self,msg):

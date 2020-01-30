@@ -10,7 +10,7 @@ class BlackAlgo(Algorithm):
     def __init__(self,Candles): #candles parametresini dataframe olarak değiştir.
         super(BlackAlgo,self).__init__(Candles)
         self.TargetMultiplier = 1.02 # %2 kazanç hedefli
-    def ApplyLiveData(self,rsi,ema,sma,price): #foınksiyonu kullan
+    def ApplyLiveData(self,rsi,ema,sma,price):
         diff = sma - ema
         if rsi < 15 and ema < 20 and sma > 25 and ema > diff and diff > 15:
             return True,Decimal(price * self.TargetMultiplier)

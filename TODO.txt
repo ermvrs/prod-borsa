@@ -1,5 +1,6 @@
 - Output kontrolü ve stabilite kontrolü. NodeJS de problem var
 - start sockets, initializetradesockets ve initialize candle sockets 3 ü aynanda çağırılırsa hataveriyor olabilir. Hata kaynağıbu bunu fixle.
+- Pairlist düzenle
 BİTENLER
 - Thread kontrolü ve hatalarda thread(market adı yazılması)- hatalı ölçülen pairleri sil
 - 3DK MUM İÇİN HACİM TESTİ YAPILDI. DAHA DUZENLI YERDE YAP VE RSI,SMA,EMA ÇIKTILARINI ALGO CANDLELAR ILE BIRLESTIR. ++
