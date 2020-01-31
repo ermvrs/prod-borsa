@@ -40,7 +40,7 @@ class InformationDatabase:
             if self.Database['PairLastSignalTime'][Signal.Pair] + self.TSBetweenSamePairSignals < Signal.Timestamp:
                 self.Database['Signals'].append(Signal)
                 self.addPairLastSignalTime(Signal.Pair, Signal.Timestamp)
-                TelegramMessage(Signal)
+                TelegramMessage(Signal) # hata yüksek ihtimal buralarda
             else:
                 print("That signal is already given in 10 minutes. Last TS : {0} - Current TS : {1} - Pair {2}".format(self.Database['PairLastSignalTime'][Signal.Pair],Signal.Timestamp,Signal.Pair))
         except KeyError:

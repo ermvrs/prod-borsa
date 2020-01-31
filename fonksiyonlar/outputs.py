@@ -1,6 +1,8 @@
 import json
 import requests
 from datetime import datetime
+from classes.error import Error
+from health.healthcontroller import InformationDatabase
 from fonksiyonlar.formats import eightdecimalstring
 from decimal import Decimal
 class TelegramOutput:
@@ -14,13 +16,19 @@ class TelegramOutput:
         response = requests.get(send_text).json()
         return response
 def TelegramMessage(signal): # bunu kullan
-    BotApi = ("1089469288:AAEGNf310x82FrmRMxEZyzxfUcgqDbqIwa0")
-    bot_chatID = str('-382269432')
-    print(signal.Sells[1])
-    Msg = "Pair : {0}%0ABuy Price : {1}%0ASell Price Levels %0A{2}%0A{3}%0A{4}".format(signal.Pair,signal.Buy,signal.Sells[0],signal.Sells[1],signal.Sells[2])
-    send_text = 'https://api.telegram.org/bot' + BotApi + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + Msg
-    resp = requests.get(send_text).json()
-    print("Message sent" + json.dumps(resp))
+    try:
+        BotApi = ("1089469288:AAEGNf310x82FrmRMxEZyzxfUcgqDbqIwa0")
+        bot_chatID = str('-382269432')
+        print(signal.Sells[1])
+        Msg = "Pair : {0}%0ABuy Price : {1}%0ASell Price Levels %0A{2}%0A{3}%0A{4}".format(signal.Pair,signal.Buy,signal.Sells[0],signal.Sells[1],signal.Sells[2])
+        send_text = 'https://api.telegram.org/bot' + BotApi + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + Msg
+        resp = requests.get(send_text).json()
+        print("Message sent" + json.dumps(resp))
+    except Exception as err:
+        errmsg = str(err)
+        errcl = Error(signal.Pair,signal.Date,"outputs.py",errmsg,2)
+        InformationDatabase.getInstance().appendError(errcl)
+        print("Error message added. Msg : {}".format(errmsg))
 class OutputManager:
     __instance = None
     @staticmethod

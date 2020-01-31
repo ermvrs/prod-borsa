@@ -1,5 +1,6 @@
 - Output kontrolü ve stabilite kontrolü. NodeJS de problem var
 - start sockets, initializetradesockets ve initialize candle sockets 3 ü aynanda çağırılırsa hataveriyor olabilir. Hata kaynağıbu bunu fixle.
+- Program bazen kendiliğinden kapanıyor. ( ilk sinyalden sonra çöküyor fixle.)
 - Pairlist düzenle
 - Health statuse daha fazla kontrol ekle ve tüm hatalarıda yazdır.
 - Binance socket hatalarını kontrol et.
