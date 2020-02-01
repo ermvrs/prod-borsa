@@ -2,9 +2,10 @@ import json
 import requests
 from datetime import datetime
 from classes.error import Error
-from health.healthcontroller import InformationDatabase
+#from health.healthcontroller import InformationDatabase
 from fonksiyonlar.formats import eightdecimalstring
 from decimal import Decimal
+'''
 class TelegramOutput:
     def __init__(self):
         self.BotApi =("1045834942:AAHAS-5JoTN9SwpVA_sXQwl4Cb3JwEdGWfw")
@@ -15,8 +16,11 @@ class TelegramOutput:
 
         response = requests.get(send_text).json()
         return response
-def TelegramMessage(signal): # bunu kullan
-    try:
+'''
+def TelegramMessage(x,y):
+    pass
+def TelegramMessagex(signal,infodb): # bunu kullan
+    try:  #burada hata oluyor sanırsam
         BotApi = ("1089469288:AAEGNf310x82FrmRMxEZyzxfUcgqDbqIwa0")
         bot_chatID = str('-382269432')
         print(signal.Sells[1])
@@ -27,8 +31,9 @@ def TelegramMessage(signal): # bunu kullan
     except Exception as err:
         errmsg = str(err)
         errcl = Error(signal.Pair,signal.Date,"outputs.py",errmsg,2)
-        InformationDatabase.getInstance().appendError(errcl)
+        infodb.appendError(errcl) #sunucuda böyle dene
         print("Error message added. Msg : {}".format(errmsg))
+'''
 class OutputManager:
     __instance = None
     @staticmethod
@@ -81,3 +86,4 @@ class OutputManager:
             'pair' : pair
         }
         r = requests.post(url = endpoint, data = data)
+'''

@@ -1,0 +1,11 @@
+{
+  "HealthPort" : 5714,
+  "HealthSecureKey" : "erimstest",
+
+  "BinanceAPIKEY" : "LUB6dWFM5MfQFLWAyKmAbYviRmdAyLMhpxBTqKZ6dV9MxTn3dzA0xVWLTeb21caj",
+  "BinanceAPIPass" : "c5tuBiHSX2FeThXBfKf1VnlLTFxj1LJdbbxcFyBc8v5ZXSfcbL3ukvu31qNDMASM",
+
+  "MarketList" : [],
+  "OutputManagerIP" : "127.0.0.1",
+  "OutputManagerPort" : "5715"
+}
