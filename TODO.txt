@@ -1,24 +1,12 @@
-- Output kontrolü ve stabilite kontrolü. NodeJS de problem var
 - start sockets, initializetradesockets ve initialize candle sockets 3 ü aynanda çağırılırsa hataveriyor olabilir. Hata kaynağıbu bunu fixle.
-- Program bazen kendiliğinden kapanıyor. ( ilk sinyalden sonra çöküyor fixle.)
 - Pairlist düzenle
 - Health statuse daha fazla kontrol ekle ve tüm hatalarıda yazdır.
 - Binance socket hatalarını kontrol et.
-BİTENLER
-- Thread kontrolü ve hatalarda thread(market adı yazılması)- hatalı ölçülen pairleri sil
-- 3DK MUM İÇİN HACİM TESTİ YAPILDI. DAHA DUZENLI YERDE YAP VE RSI,SMA,EMA ÇIKTILARINI ALGO CANDLELAR ILE BIRLESTIR. ++
-- HEPSİNİ Bİ DATAFRAMEDE TOPLAYABİLİRİZ. ++
-- 3DK Mum fix ++
-- Algocandlea hacim ekle ++
-- Sayıları standart decimal ile satoshi cinsine çevir.++
-- Algorithm connection with live data.
-- Binance marketi localbook olarak olustur ++
-- Output live test datas to telegram or email ++
-- Backtest ve price yazan heryerde scientific not. yerine decimalli yazdır. ++
--   Multi threading. ++
+- Outputmgr socket yaz
+- SMA EMA indikatörlerinide tech dataya ekle
+- output.py sendsignalde çöküyor.
+- programı baştan aşağı düzenle ve stabilite arttır.
+
+
 --ALGO IMPROVEMENTS--
 ** ani düşüşleri kontrol etmesi için sma fiyaat kontrolu
-
-
-* gobtc gibi düşük satoshili paritelerde stop ve kaar oranlarını arttır. gobtc %10 kaardada %100 tutturmuş.
-* düşük satoshilerde daha iyi çalışmakta. hedefler daha kısa sürede gelmekte.

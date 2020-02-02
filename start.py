@@ -1,3 +1,4 @@
+'''
 from binanceapi.connector import Binance
 from market.marketstarter import startFunctionsForMarket, StartParams
 from classes.threadings import ThreadHandler
@@ -13,7 +14,7 @@ InformationDatabase() # initiliaze db
 
 
 btcmarkets = []
-with open("marketlist-r.txt" , "r") as file:
+with open("marketlist.txt" , "r") as file:
     data = file.read()
     btcmarkets = json.loads(data)
 
@@ -26,4 +27,27 @@ for item in btcmarkets:
 for th in Threads:
     th.StartThread()
 
+app.run(host="0.0.0.0",port=int(config.Configurations.getInstance().getKey('HealthPort')))
+'''
+from binanceapi.connector import Binance
+from multithreading.ThreadClass import Threads,ThreadInterface,StartParams
+from market.marketstarter import startFunctionsForMarket
+from health.healthcontroller import InformationDatabase
+from configuration import config
+from health.statusoutput import app
+import json
+InformationDatabase()
+config.Configurations(config.ConfigInterface("config.json").get())
+Exchange = Binance(config.Configurations.getInstance().getKey('BinanceAPIKEY'),config.Configurations.getInstance().getKey('BinanceAPIPass'))
+Threads() # Threads listesini oluştur.
+btcmarkets = []
+with open("marketlist.txt" , "r") as file:
+    data = file.read()
+    btcmarkets = json.loads(data)
+
+for item in btcmarkets:
+    th = ThreadInterface(item,Exchange,startFunctionsForMarket)
+    Threads.getInstance().AppendThread(item,th)
+
+Threads.getInstance().StartAllThreads()
 app.run(host="0.0.0.0",port=int(config.Configurations.getInstance().getKey('HealthPort')))

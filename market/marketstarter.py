@@ -11,8 +11,11 @@ def startFunctionsForMarket(StartParams):
         info = Information(StartParams.Symbol, getcurrentdate(), "Starting Local Market")
         InformationDatabase.getInstance().appendInfoToPair(StartParams.Symbol, info)
         InformationDatabase.getInstance().addPairStatus(StartParams.Symbol,"Starting")
+        StartParams.Thread.AppendProcess("Starting")
         candlelist = StartParams.Exchange.getKlines(StartParams.Symbol,StartParams.Exchange.Client.KLINE_INTERVAL_3MINUTE,limit=1200)
+        StartParams.Thread.AppendProcess("Taking KLINES")
         print("24 VOLUME OF {0} : {1}".format(StartParams.Symbol,StartParams.Exchange.get24HVolume(StartParams.Symbol)[0]))
+        StartParams.Thread.AppendProcess("24 Hour Volume is : {0}".format(StartParams.Exchange.get24HVolume(StartParams.Symbol)[0]))
         #candlelist = StartParams.Exchange.getHistoricalCandles(StartParams.Symbol,StartParams.Exchange.Client.KLINE_INTERVAL_3MINUTE,"3 days ago UTC")
         array_of_dicts = []
         for candle in candlelist:
@@ -33,7 +36,7 @@ def startFunctionsForMarket(StartParams):
             else:
                 continue
         df = pd.DataFrame(array_of_dicts)
-        #print("({0})Length of Dict : {1}".format(StartParams.Symbol,len(df)))
+        StartParams.Thread.AppendProcess("Data Frame Loaded. Length is : {}".format(len(df)))
         info = Information(StartParams.Symbol, getcurrentdate(), "Dict Length : {}".format(len(df)))
         InformationDatabase.getInstance().appendInfoToPair(StartParams.Symbol, info)
         if len(df) > 300:
@@ -46,7 +49,7 @@ def startFunctionsForMarket(StartParams):
             rsivalues.reset_index(drop=True, inplace=True)
             ema.reset_index(drop=True, inplace=True)
             sma.reset_index(drop=True, inplace=True)
-
+            StartParams.Thread.AppendProcess("Tech Calculations Done.")
             for index, row in df.iterrows():
                 df.loc[index, "RSI"] = rsivalues[index]
                 df.loc[index, "EMA"] = ema[index]
@@ -54,18 +57,19 @@ def startFunctionsForMarket(StartParams):
             df.dropna(inplace=True)
             df.reset_index(drop=True, inplace=True)  # Dropped nan values
             ##marketi başlat
-
-            markt = Market(StartParams.Symbol,StartParams.Exchange)
+            StartParams.Thread.AppendProcess("Starting local market")
+            markt = Market(StartParams.Symbol,StartParams.Exchange,StartParams.Thread)
             markt.loadCandles(df[-250:])
             markt.InitializeCandleSockets(StartParams.Exchange.Client.KLINE_INTERVAL_3MINUTE)
             markt.InitializeTradeSockets()
             markt.startSockets() #startsockets çağrılmadımı program kapanıyor.
-            #print("Market Started Succesfully - ({})".format(StartParams.Symbol))
             info = Information(StartParams.Symbol, getcurrentdate(), "Market Started Succesfully")
+            StartParams.Thread.AppendProcess("Market was started")
             InformationDatabase.getInstance().addPairStatus(StartParams.Symbol, "Started & Working")
             InformationDatabase.getInstance().appendInfoToPair(StartParams.Symbol, info)
             #print("({3})Values : RSI:{0} EMA:{1} SMA:{2}".format(list(rsivalues)[-1:],list(ema)[-1:],list(sma)[-1:],StartParams.Symbol))
         else:
+            StartParams.Thread.AppendProcess("Pair has not enough candles. Min : 300")
             #print("{} - Market has not enough candles".format(StartParams.Symbol))
             info = Information(StartParams.Symbol, getcurrentdate(), "Market has not enough candles")
             InformationDatabase.getInstance().addPairStatus(StartParams.Symbol, "Stopped. Not enough candles.")
@@ -74,6 +78,7 @@ def startFunctionsForMarket(StartParams):
         err_msg = str(err)
         err_cl = Error(StartParams.Symbol,getcurrentdate(),"MarketStarterException",err_msg,2)
         InformationDatabase.getInstance().appendError(err_cl)
+        StartParams.Thread.AppendThreadError(err_cl)
         print("Error was added to InfoDB")
 class StartParams:
     def __init__(self,sym,exc):

@@ -1,5 +1,6 @@
 from flask import Flask,request
 from health.healthcontroller import InformationDatabase
+from multithreading.ThreadClass import Threads
 from fonksiyonlar.timefuncs import getcurrentdate,getcurrentts
 import json
 app = Flask("__main__")
@@ -33,3 +34,20 @@ def pairstateout():
 def time():
     json_string = { 'Date' : getcurrentdate(), 'Timestamp' : getcurrentts()}
     return json_string
+
+@app.route('/thread')
+def thread():
+    pair = request.args.get('name', default="TESTBTC", type=str)
+    thins = Threads.getInstance().GetThreadByName(pair)
+    if not thins:
+        return json.dumps({"Result" : False, "Description" : "Thread not found at list."})
+    else:
+        obj = {
+            "Name" : thins.Name,
+            "Errors": thins.Errors,
+            "Outputs" : thins.Outputs,
+            "LastProcess" : thins.LastProcess,
+            "ProcessList" : thins.LastProcessList,
+            "isThreadAlive" : thins.isThreadAlive()
+        }
+        return json.dumps(obj)
