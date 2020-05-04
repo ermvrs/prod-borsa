@@ -5,4 +5,4 @@ Fully supports reconnection on binance websockets and multi-threading.
 Algorithm that used by Tassandra is removed. Please check algorithms before using.  
 
 That's an experimental software. Don't make your investments without doing any programmatically upgrades.
-    Developed by Erim VARIŞ for Tassandra  
+      Developed by Erim VARIŞ for Tassandra  
